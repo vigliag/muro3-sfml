@@ -32,6 +32,7 @@ sf::FloatRect Player::bounds(){
 }
 
 void Player::move(const Vector2f &movement){
+  position += movement;
   drawable.move(movement);
 }
 

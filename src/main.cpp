@@ -11,6 +11,7 @@
 #include "util.h"
 #include "recharger.h"
 #include "zombie.h"
+#include "projectile.h"
 
 using std::make_unique;
 using sf::Vector2f;
@@ -45,7 +46,7 @@ int main()
   gameOverText.setString("Game Over");
 
   std::list<Zombie> zombies;
-  //std::list<Projectile> projectiles;
+  std::list<Projectile> projectiles;
 
   while (window.isOpen())
   {
@@ -86,7 +87,7 @@ int main()
 
       //handle shooting
       if (shoot && player.useAmmo()){
-
+        projectiles.emplace_front(player.position, Vector2f{0.f, 1.f});
       }
 
       //tick every second
@@ -95,7 +96,7 @@ int main()
         lastUpdateTime = currentTime;
 
         //Zombie generation logic
-        int maxZombiesToGenerate = floor(log(currentTime));
+        int maxZombiesToGenerate = floor(log(currentTime/2));
         int zombiesToGenerate = 0;
         for( int i = 0; i < maxZombiesToGenerate; i++ ){
           if (rand() % 2) {
@@ -111,7 +112,32 @@ int main()
 
       }
 
+      //collision detection
+      for (auto ztr = zombies.begin(); ztr != zombies.end(); /*nothing*/){
+        bool collision = false;
+
+        for (auto itr = projectiles.begin(); itr!= projectiles.end(); ){
+          collision = itr->bounds().intersects(ztr->bounds());
+          if (collision){
+            itr = projectiles.erase(itr);
+            break;
+          } else {
+            ++itr;
+          }
+        }
+
+        if (collision){
+          ztr = zombies.erase(ztr);
+        } else {
+          ++ztr;
+        }
+      }
+
       //move zombies and projectiles and check for game over
+      for(auto &projectile: projectiles){
+        projectile.move();
+      }
+
       for(auto &zombie: zombies){
         if (zombie.position.y < 40){
           gameOver = true;
@@ -126,7 +152,10 @@ int main()
     window.draw(recharger);
     window.draw(player);
 
-    for(auto zombie: zombies){
+    for(auto &projectile: projectiles){
+      window.draw(projectile);
+    }
+    for(auto &zombie: zombies){
       window.draw(zombie);
     }
 
