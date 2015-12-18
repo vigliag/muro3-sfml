@@ -1,32 +1,46 @@
-SOURCES=player.cpp util.cpp
-OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=sfml-app
 CFLAGS=-c -std=c++14 -g
 CC=g++
+LD=g++
 LDFLAGS=-lsfml-graphics -lsfml-window -lsfml-system
 
-TESTSOURCES=tests/utiltest.cpp
-TESTOBJECTS=$(TESTSOURCES:.cpp=.o)
-TESTEXECUTABLE=tests/test
+SRC=player.cpp util.cpp
+BUILDDIR=build
+SRCDIR=src
+OBJECTS=$(patsubst %.cpp, $(BUILDDIR)/%.o, $(SRC))
+EXECUTABLE=$(BUILDDIR)/sfml-app
 
-all: $(SOURCES) $(EXECUTABLE)
+TESTS=utiltest.cpp
+TESTDIR=tests
+TESTBUILDDIR=build/tests
+TESTOBJECTS=$(patsubst %.cpp, $(TESTBUILDDIR)/%.o, $(TESTS))
+TESTEXECUTABLE=$(TESTBUILDDIR)/utiltest
 
-$(EXECUTABLE): $(OBJECTS) main.o
-	$(CC) $(LDFLAGS) $(OBJECTS) main.o -o $@
 
-.cpp.o:
+
+$(EXECUTABLE): $(OBJECTS)
+	$(LD) $(LDFLAGS) $(OBJECTS) $(BUILDDIR)/main.o -o $@
+
+$(BUILDDIR)/%.o : $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) $< -o $@
 
-clean:
-	rm $(OBJECTS) $(TESTOBJECTS) $(EXECUTABLE)
+$(TESTBUILDDIR)/%.o: $(TESTDIR)/%.cpp
+	$(CC) $(CFLAGS) $< -o $@
 
-build-tests: $(TESTOBJECTS)
+.PHONY: all build-tests run-tests debug-tests clean
 
-$(TESTEXECUTABLE): $(TESTOBJECTS)
-	$(CC) $(LDFLAGS) $(TESTOBJECTS) $(OBJECTS) -o $@
+all: $(EXECUTABLE)
 
-test: build-tests $(TESTEXECUTABLE)
+build-tests: $(TESTOBJECTS) $(OBJECTS)
+	$(CC) $(LDFLAGS) $(TESTOBJECTS) $(OBJECTS) -o $(TESTEXECUTABLE)
+
+run-tests: build-tests
 	$(TESTEXECUTABLE)
 
-test-debug: build-tests $(TESTEXECUTABLE)
+debug-tests: build-tests
 	lldb $(TESTEXECUTABLE)
+
+run: $(EXECUTABLE)
+	$(EXECUTABLE)
+
+clean:
+	rm build/tests/* build/* 

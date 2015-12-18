@@ -2,8 +2,8 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
-#include "catch.hpp"
-#include "../util.h"
+#include "../lib/catch.hpp"
+#include "../src/util.h"
 
 
 TEST_CASE( "limitMovementToBound" ) {
