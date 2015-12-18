@@ -1,9 +1,10 @@
 #include "zombie.h"
 
-Zombie::Zombie(const sf::Vector2f& a_position)
-  :drawable(sf::Vector2f{20.f, 20.f})
-  ,position(a_position){
-  drawable.setFillColor(sf::Color::Green);
+Zombie::Zombie(const sf::Vector2f& a_position, const sf::Vector2f& a_speed)
+  :drawable(10.f, 4)
+  ,position(a_position)
+  ,speed(a_speed){
+  drawable.setFillColor(sf::Color::Magenta);
   drawable.setPosition(position);
 }
 
@@ -18,3 +19,8 @@ sf::FloatRect Zombie::bounds(){
 void Zombie::draw(sf::RenderTarget& target, sf::RenderStates states) const {
   target.draw(drawable, states);
 };
+
+void Zombie::move(){
+  position += speed;
+  drawable.move(speed);
+}

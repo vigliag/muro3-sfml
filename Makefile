@@ -3,7 +3,7 @@ LD=g++
 CFLAGS=-c -std=c++14 -g
 LDFLAGS=-lsfml-graphics -lsfml-window -lsfml-system
 
-SRC=player.cpp util.cpp recharger.cpp
+SRC=player.cpp util.cpp recharger.cpp zombie.cpp projectile.cpp
 BUILDDIR=build
 SRCDIR=src
 OBJECTS=$(patsubst %.cpp, $(BUILDDIR)/%.o, $(SRC))
