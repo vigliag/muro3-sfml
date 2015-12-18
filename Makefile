@@ -1,9 +1,9 @@
-CFLAGS=-c -std=c++14 -g
 CC=g++
 LD=g++
+CFLAGS=-c -std=c++14 -g
 LDFLAGS=-lsfml-graphics -lsfml-window -lsfml-system
 
-SRC=player.cpp util.cpp
+SRC=player.cpp util.cpp recharger.cpp
 BUILDDIR=build
 SRCDIR=src
 OBJECTS=$(patsubst %.cpp, $(BUILDDIR)/%.o, $(SRC))
@@ -15,9 +15,7 @@ TESTBUILDDIR=build/tests
 TESTOBJECTS=$(patsubst %.cpp, $(TESTBUILDDIR)/%.o, $(TESTS))
 TESTEXECUTABLE=$(TESTBUILDDIR)/utiltest
 
-
-
-$(EXECUTABLE): $(OBJECTS)
+$(EXECUTABLE): $(OBJECTS) $(BUILDDIR)/main.o
 	$(LD) $(LDFLAGS) $(OBJECTS) $(BUILDDIR)/main.o -o $@
 
 $(BUILDDIR)/%.o : $(SRCDIR)/%.cpp
@@ -43,4 +41,4 @@ run: $(EXECUTABLE)
 	$(EXECUTABLE)
 
 clean:
-	rm build/tests/* build/* 
+	rm build/tests/* build/*

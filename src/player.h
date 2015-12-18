@@ -16,18 +16,23 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-class Player {
+const float playerY = 20.f;
+
+class Player : public sf::Drawable {
 public:
-    Player(std::unique_ptr<sf::Shape>&&);
+    Player();
     Player(const Player& orig);
     virtual ~Player();
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
     sf::FloatRect bounds();
-
     void move(const sf::Vector2f& movement);
+    int recharge();
+    bool useAmmo();
 
-    bool hasAmmo = false;
-    sf::Vector2f position;
-    std::unique_ptr<sf::Shape> drawable;
+    unsigned int ammo = 0;
+    sf::Vector2f position{0.f, playerY};
+    sf::CircleShape drawable{10.f};
 private:
 
 };
